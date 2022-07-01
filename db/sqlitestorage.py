@@ -1,9 +1,10 @@
+import os
 import sqlite3
 
 from typing import List
 
 
-DB_FILE = "turns.db"
+DB_FILE = os.getenv("SQLite3_DB_FILE", "turns.db")
 
 
 def init_database():
