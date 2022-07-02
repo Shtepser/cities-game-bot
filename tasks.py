@@ -1,10 +1,15 @@
 import os
+
+from zipfile import ZipFile
 from invoke import task
 
 
 LOCAL_SQLite3_DB = "turns.db"
 LOCAL_YDB_DOCKER_PORT = 2136
 LOCAL_YDB_DATABASE = "/local"
+
+SOURCES_ARCHIVE = "source.zip"
+STATIC_ARCHIVE = "static.zip"
 
 
 @task
@@ -16,6 +21,15 @@ def run_cli(context, db="sqlite"):
     else:
         raise Exception(f"Unknown --db option: {db}")
     context.run("python3 cli-interface.py")
+
+
+@task
+def bundle(context):
+    context.run(f"zip {SOURCES_ARCHIVE} -r cli-interface.py cities_game "
+                f"db requirements.txt LICENSE "
+                f"-x *.pyc -x **/__pycache__/")
+    context.run(f"cd static && "
+                f"zip ../{STATIC_ARCHIVE} -r .")
 
 
 def _setup_ydb_in_docker(context):
