@@ -2,6 +2,7 @@ import os
 
 from db import add_turns, get_turns, reset_game
 from cities_game import handle_turn, TurnResult
+from messages import *
 
 
 def main():
@@ -14,18 +15,17 @@ def main():
         return
     result, ai_turn = handle_turn(turn, cities, turns)
     if result is TurnResult.success:
-        print(f"Ход ИИ: {ai_turn}")
+        print(successful_turn_report(turn, ai_turn))
         add_turns(id_, [turn, ai_turn])
     elif result is TurnResult.player_wins:
-        print("Поздравляем, вы выиграли!")
+        print(player_victory_report(turn))
         reset_game(id_)
     elif result is TurnResult.unmatched_letters:
-        print("Первая буква вашего города не совпадает с последней буквой"
-              " предыдущего названного")
+        print(unmatched_letters_report(turn, turns[-1]))
     elif result is TurnResult.already_taken:
-        print(f"Город {turn} уже называли")
+        print(already_taken_report(turn))
     elif result is TurnResult.no_such_city:
-        print(f"Нет такого города, как {turn}")
+        print(unknown_city_report(turn))
 
 
 def load_cities():

@@ -25,8 +25,9 @@ def run_cli(context, db="sqlite"):
 
 @task
 def bundle(context):
-    context.run(f"zip {SOURCES_ARCHIVE} -r cli-interface.py cities_game "
-                f"db requirements.txt LICENSE "
+    context.run(f"zip {SOURCES_ARCHIVE} -r requirements.txt LICENSE "
+                f"cli_interface.py serverless_interface.py messages.py "
+                f"cities_game db telebot_bot "
                 f"-x *.pyc -x **/__pycache__/")
     context.run(f"cd static && "
                 f"zip ../{STATIC_ARCHIVE} -r .")
