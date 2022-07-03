@@ -19,7 +19,7 @@ def handle_turn(turn: str, cities: Iterable[str], turns_history: list[str]) \
         return TurnResult.already_taken, None
     if turn not in cities:
         return TurnResult.no_such_city, None
-    possible_turns = set(cities) - set(turns_history)
+    possible_turns = set(cities) - set(turns_history) - {turn}
     possible_turns = {city for city in possible_turns if letters_match(turn, city)}
     if len(possible_turns) == 0:
         return TurnResult.player_wins, None
