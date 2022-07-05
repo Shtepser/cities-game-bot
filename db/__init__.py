@@ -4,6 +4,8 @@ import logging
 logger = logging.getLogger("db-loader")
 logger.setLevel(logging.INFO)
 
+from cities_game import Difficulty
+
 
 DB_ENGINE = os.getenv("DB_ENGINE")
 if DB_ENGINE is None:
@@ -22,7 +24,15 @@ else:
     raise Exception("Wrong configuration: DB_ENGINE must be of {\"YDB\", \"SQLite3\"}")
 
 
+def get_difficulty(player_id: int) -> Difficulty:
+    return Difficulty(get_difficulty_level(player_id))
+
+
+def set_difficulty(player_id: int, difficulty: Difficulty):
+    set_difficulty_level(player_id, int(difficulty))
+
+
 __all__ = ["add_turns", "get_turns",
-           "get_difficulty_level", "set_difficulty_level",
+           "get_difficulty", "set_difficulty",
            "reset_game"]
 

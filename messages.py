@@ -1,6 +1,6 @@
 from typing import List
 
-from cities_game.game import preprocess
+from cities_game.game import preprocess, Difficulty
 
 
 def successful_turn_report(player_turn: str, ai_turn: str) -> str:
@@ -42,4 +42,13 @@ def city_info(city: List, use_markdown=True) -> str:
     else:
         territorial_info = f", {country}"
     return f"Город {name}{territorial_info}."
+
+
+def difficulty_name(difficulty: Difficulty) -> str:
+    return {
+        Difficulty.not_set: "не установлена (полная случайность)",
+        Difficulty.easy: "низкая",
+        Difficulty.normal: "нормальная",
+        Difficulty.hard: "высокая"
+    }[difficulty]
 

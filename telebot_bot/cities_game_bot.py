@@ -2,8 +2,8 @@ import os
 import logging
 import telebot
 
-from db import add_turns, get_turns, reset_game
-from cities_game import handle_turn, TurnResult
+from db import add_turns, get_turns, reset_game, get_difficulty, set_difficulty
+from cities_game import handle_turn, TurnResult, Difficulty
 from messages import *
 from cli_interface import load_cities
 
@@ -49,7 +49,25 @@ def send_help(message):
                      "/where, /wtf — информация о последнем названном ботом городе"
                      "/surrender — сдаться\n"
                      "/help — показать это сообщение\n"
-                     "/info — показать информацию о боте")
+                     "/info — показать информацию о боте\n"
+                     "/setEasy — установить низкую сложность игры\n"
+                     "/setNormal — установить нормальную сложность игры\n"
+                     "/setHard — установить высокую сложность игры\n"
+                     "/setRandom — полностью случайный выбор, без подстройки сложности")
+
+
+@bot.message_handler(commands=["setEasy", "setNormal", "setHard", "setRandom"])
+def change_difficulty(message):
+    difficulty = message.text.lstrip("/set").lower()
+    difficulty = {
+        "easy": Difficulty.easy,
+        "normal": Difficulty.normal,
+        "hard": Difficulty.hard,
+        "random": Difficulty.not_set,
+    }[difficulty]
+    set_difficulty(message.chat.id, difficulty)
+    bot.send_message(message.chat.id,
+                     f"Сложность: {difficulty_name(difficulty)}")
 
 
 @bot.message_handler(func=lambda message: message.text.strip().endswith('?'))
@@ -76,8 +94,8 @@ def process_turn(message):
     logger.info("Processing turn %s from user %d", message.text, message.chat.id)
     player_id, player_turn = message.chat.id, message.text.strip()
     cities = load_cities()
-    turns = get_turns(player_id)
-    turn_result, ai_turn = handle_turn(player_turn, cities, turns)
+    turns, difficulty = get_turns(player_id), get_difficulty(player_id)
+    turn_result, ai_turn = handle_turn(player_turn, cities, turns, difficulty)
     if turn_result is TurnResult.success:
         response = successful_turn_report(player_turn, ai_turn)
         add_turns(player_id, [player_turn, ai_turn])
