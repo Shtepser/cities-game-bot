@@ -40,7 +40,7 @@ def register_surrender(message):
                      bot_victory_report())
 
 
-@bot.message_handler(commands=["help"])
+@bot.message_handler(commands=["help", "commands"])
 def send_help(message):
     logger.info("Processing command /help from user %d", message.chat.id)
     bot.send_message(message.chat.id,
