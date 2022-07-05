@@ -22,7 +22,18 @@ def run_cli(context, db="sqlite"):
         _setup_ydb_in_docker(context)
     else:
         raise Exception(f"Unknown --db option: {db}")
-    context.run("python3 cli-interface.py")
+    context.run("python3 cli_interface.py")
+
+
+@task
+def run_server(context, db="sqlite"):
+    if db == "sqlite":
+        _setup_sqlite3_db(context)
+    elif db == "ydb-docker":
+        _setup_ydb_in_docker(context)
+    else:
+        raise Exception(f"Unknown --db option: {db}")
+    context.run("python3 server_interface.py")
 
 
 @task
