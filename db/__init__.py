@@ -10,13 +10,19 @@ if DB_ENGINE is None:
     raise Exception("Wrong configuration: DB_ENGINE environment variable must be set")
 if DB_ENGINE == "SQLite3":
     logger.critical("Loading SQLite3 storage")
-    from db.sqlitestorage import add_turns, get_turns, reset_game
+    from db.sqlitestorage import add_turns, get_turns, \
+        get_difficulty_level, set_difficulty_level, \
+        reset_game
 elif DB_ENGINE == "YDB":
     logger.critical("Loading ydb storage")
-    from db.ydbstorage import add_turns, get_turns, reset_game
+    from db.ydbstorage import add_turns, get_turns, \
+        get_difficulty_level, set_difficulty_level, \
+        reset_game
 else:
     raise Exception("Wrong configuration: DB_ENGINE must be of {\"YDB\", \"SQLite3\"}")
 
 
-__all__ = ["add_turns", "get_turns", "reset_game"]
+__all__ = ["add_turns", "get_turns",
+           "get_difficulty_level", "set_difficulty_level",
+           "reset_game"]
 

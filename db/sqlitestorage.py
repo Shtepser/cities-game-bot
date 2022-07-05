@@ -17,6 +17,12 @@ def init_database():
                 turn CHAR[255] NOT NULL
             );
         """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS difficulty (
+                player_id INTEGER PRIMARY KEY NOT NULL,
+                level INTEGER NOT NULL
+            );
+        """)
         connection.commit()
 
 
@@ -49,6 +55,46 @@ def reset_game(player_id: int):
             DELETE FROM turns WHERE player_id = ?;
         """, (player_id,))
         connection.commit()
+
+
+def get_difficulty_level(player_id: int) -> int:
+    if not _is_difficulty_set(player_id):
+        return 0
+    with sqlite3.connect(DB_FILE) as connection:
+        cursor = connection.cursor()
+        record = cursor.execute("""
+            SELECT level FROM difficulty
+            WHERE player_id = ?
+            LIMIT 1;
+        """, (player_id,)).fetchone()
+    return record[0]
+
+
+def set_difficulty_level(player_id: int, level: int):
+    with sqlite3.connect(DB_FILE) as connection:
+        cursor = connection.cursor()
+        if _is_difficulty_set(player_id):
+            request = """
+                UPDATE difficulty SET level = :level
+                WHERE player_id = :player_id;
+            """
+        else:
+            request = """
+                INSERT INTO difficulty (player_id, level)
+                VALUES (:player_id, :level);
+            """
+        cursor.execute(request, {"level": level, "player_id": player_id})
+        connection.commit()
+
+
+def _is_difficulty_set(player_id: int) -> bool:
+    with sqlite3.connect(DB_FILE) as connection:
+        cursor = connection.cursor()
+        count = cursor.execute("""
+            SELECT COUNT(*) FROM difficulty
+            WHERE player_id = ?;
+        """, (player_id,)).fetchone()[0]
+        return bool(count)
 
 
 init_database()
