@@ -11,7 +11,7 @@ LOCAL_SQLite3_DB = "turns.db"
 LOCAL_YDB_DOCKER_PORT = 2136
 LOCAL_YDB_DATABASE = "/local"
 
-SOURCES_ARCHIVE = "source.zip"
+SOURCES_ARCHIVE = "bundle.zip"
 
 
 @task
@@ -38,6 +38,8 @@ def run_server(context, db="sqlite"):
 
 @task
 def bundle(context):
+    if os.path.exists(SOURCES_ARCHIVE):
+        os.remove(SOURCES_ARCHIVE)
     context.run(f"zip {SOURCES_ARCHIVE} -r requirements.txt LICENSE "
                 f"cli_interface.py serverless_interface.py messages.py "
                 f"cities_game db telebot_bot "
