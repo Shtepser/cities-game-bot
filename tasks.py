@@ -46,7 +46,7 @@ def csv_cities_to_json(context):
     for city in cities:
         city, city_name, country, region, info, is_contrary = city
         first_letter = city_name[0]
-        cities_dict[first_letter][city_name] = [country, region, info,
+        cities_dict[first_letter][city_name] = [city_name, country, region, info,
                                                 is_contrary == "Да"]
 
     with open(os.path.join("static", "cities.json"), 'w', encoding="utf-8") as f:

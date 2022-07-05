@@ -46,9 +46,19 @@ def send_help(message):
     bot.send_message(message.chat.id,
                      "Бот для игры в города.\n\nКоманды:\n"
                      "/start — начать игру\n"
+                     "/where, /wtf — информация о последнем названном ботом городе"
                      "/surrender — сдаться\n"
                      "/help — показать это сообщение\n"
                      "/info — показать информацию о боте")
+
+
+@bot.message_handler(func=lambda message: message.text.strip().endswith('?'))
+@bot.message_handler(commands=["where", "what", "wtf"])
+def send_info_on_city(message):
+    logger.info("Processing command /where from user %d", message.chat.id)
+    city = get_turns(message.chat.id)[-1]
+    city = load_cities()[preprocess(city)[0].upper()][city]
+    bot.send_message(message.chat.id, city_info(city), parse_mode="Markdown")
 
 
 @bot.message_handler(commands=["info"])

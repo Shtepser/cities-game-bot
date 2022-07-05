@@ -1,3 +1,5 @@
+from typing import List
+
 from cities_game.game import preprocess
 
 
@@ -25,4 +27,19 @@ def already_taken_report(player_turn: str) -> str:
 
 def unknown_city_report(player_turn: str) -> str:
     return f"Не знаю я город {player_turn}..."
+
+
+def city_info(city: List, use_markdown=True) -> str:
+    city, country, region, info_link, is_contrary = city
+    if use_markdown:
+        name = f"[{city}]({info_link.replace(')', '%29')})"
+    else:
+        name = city
+    if is_contrary:
+        territorial_info = ''
+    elif country == "Россия":
+        territorial_info = f", {region}"
+    else:
+        territorial_info = f", {country}"
+    return f"Город {name}{territorial_info}."
 
