@@ -12,7 +12,6 @@ LOCAL_YDB_DOCKER_PORT = 2136
 LOCAL_YDB_DATABASE = "/local"
 
 SOURCES_ARCHIVE = "source.zip"
-STATIC_ARCHIVE = "static.zip"
 
 
 @task
@@ -31,9 +30,8 @@ def bundle(context):
     context.run(f"zip {SOURCES_ARCHIVE} -r requirements.txt LICENSE "
                 f"cli_interface.py serverless_interface.py messages.py "
                 f"cities_game db telebot_bot "
+                f"static/cities.json "
                 f"-x *.pyc -x **/__pycache__/")
-    context.run(f"cd static && "
-                f"zip ../{STATIC_ARCHIVE} -r .")
 
 
 @task
