@@ -1,4 +1,4 @@
-import csv
+import json
 import os
 
 from db import add_turns, get_turns, reset_game
@@ -30,10 +30,8 @@ def main():
 
 
 def load_cities():
-    with open(os.path.join("static", "cities.csv"), encoding="utf-8") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        return [city for _, city, *_ in reader]
+    with open(os.path.join("static", "cities.json"), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def ask_id() -> int:

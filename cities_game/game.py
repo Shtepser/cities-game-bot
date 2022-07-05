@@ -1,6 +1,6 @@
 from enum import auto, Enum
 from random import choice
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Dict
 
 
 class TurnResult(Enum):
@@ -11,19 +11,23 @@ class TurnResult(Enum):
     player_wins = auto()
 
 
-def handle_turn(turn: str, cities: Iterable[str], turns_history: list[str]) \
+def handle_turn(turn: str, cities: Dict, turns_history: list[str]) \
         -> Tuple[TurnResult, str]:
     if turns_history and not letters_match(turns_history[-1], turn):
         return TurnResult.unmatched_letters, None
     if turn in turns_history:
         return TurnResult.already_taken, None
-    if turn not in cities:
+    if turn not in cities[turn[0]].keys():
         return TurnResult.no_such_city, None
-    possible_turns = set(cities) - set(turns_history) - {turn}
-    possible_turns = {city for city in possible_turns if letters_match(turn, city)}
+    possible_turns = select_possible_turns(turn, cities, turns_history)
     if len(possible_turns) == 0:
         return TurnResult.player_wins, None
     return TurnResult.success, choice(tuple(possible_turns))
+
+
+def select_possible_turns(turn: str, cities: Dict, turns_history: Iterable[str]):
+    cities_at_the_last_letter = set(cities[preprocess(turn)[-1].upper()])
+    return cities_at_the_last_letter - set(turns_history) - {turn}
 
 
 def letters_match(previous_city, next_city):

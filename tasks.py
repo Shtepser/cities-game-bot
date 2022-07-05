@@ -1,5 +1,8 @@
+import csv
+import json
 import os
 
+from collections import defaultdict
 from zipfile import ZipFile
 from invoke import task
 
@@ -31,6 +34,25 @@ def bundle(context):
                 f"-x *.pyc -x **/__pycache__/")
     context.run(f"cd static && "
                 f"zip ../{STATIC_ARCHIVE} -r .")
+
+
+@task
+def csv_cities_to_json(context):
+    with open(os.path.join("static", "cities.csv"), encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        cities = [row for row in reader]
+
+    cities_dict = defaultdict(dict)
+
+    for city in cities:
+        city, city_name, country, region, info, is_contrary = city
+        first_letter = city_name[0]
+        cities_dict[first_letter][city_name] = [country, region, info,
+                                                is_contrary == "Да"]
+
+    with open(os.path.join("static", "cities.json"), 'w', encoding="utf-8") as f:
+        json.dump(cities_dict, f, ensure_ascii=False, indent=4)
 
 
 def _setup_ydb_in_docker(context):
